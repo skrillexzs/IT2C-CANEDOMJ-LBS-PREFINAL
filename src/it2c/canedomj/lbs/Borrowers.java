@@ -70,7 +70,9 @@ public class Borrowers {
     public void addBorrowers(){
       
       Scanner sc = new Scanner(System.in);
+      String continueAdding;
       
+      do{
       System.out.print("Borrowers First Name: ");
       String bwfname = sc.nextLine();
       System.out.print("Borrowers Last Name: ");
@@ -84,6 +86,11 @@ public class Borrowers {
       config conf = new config();
       
       conf.addRecord(qry, bwfname, bwlname, bwcontact, bdbooks);
+      
+      System.out.print("Do you want to add another book? (yes/no): ");
+      continueAdding = sc.nextLine();
+      
+      }while (continueAdding.equalsIgnoreCase("yes"));
   }
     
     public void viewBorrowers(){

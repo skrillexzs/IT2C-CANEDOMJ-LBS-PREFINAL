@@ -48,8 +48,15 @@ public class IT2CCANEDOMJLBS {
                     reports.Reports();
 
                     break;
-
+                    
                 case 4:
+                    Reports reports = new Reports();
+
+                    reports.Reports();
+
+                    break;
+
+                case 5:
                     System.out.print("Exiting Program... type 'yes' to continue: ");
                     String resp = sc.next();
                     if(resp.equalsIgnoreCase("yes")){

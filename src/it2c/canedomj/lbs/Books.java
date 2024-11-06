@@ -70,7 +70,9 @@ public class Books {
   public void addBooks(){
       
       Scanner sc = new Scanner(System.in);
+      String continueAdding;
       
+      do{
       System.out.print("Book Name: ");
       String bname = sc.nextLine();
       System.out.print("Book Genre: ");
@@ -84,6 +86,11 @@ public class Books {
       config conf = new config();
       
       conf.addRecord(qry, bname, bgen, bauth, bstat);
+      
+      System.out.print("Do you want to add another book? (yes/no): ");
+      continueAdding = sc.nextLine();
+      
+      }while (continueAdding.equalsIgnoreCase("yes"));
   }
   
   private void viewBooks(){
