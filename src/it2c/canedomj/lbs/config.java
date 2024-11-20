@@ -146,6 +146,9 @@ public void deleteRecord(String sql, Object... values) {
 //-----------------------------------------------
     // Helper Method for Setting PreparedStatement Values
     //-----------------------------------------------
+    //-----------------------------------------------
+    // Helper Method for Setting PreparedStatement Values
+    //-----------------------------------------------
     private void setPreparedStatementValues(PreparedStatement pstmt, Object... values) throws SQLException {
         for (int i = 0; i < values.length; i++) {
             if (values[i] instanceof Integer) {
@@ -189,6 +192,10 @@ public void deleteRecord(String sql, Object... values) {
             System.out.println("Error retrieving single value: " + e.getMessage());
         }
         return result;
+    }
+
+    String getSingleStringValue(String statusQuery, int bbid) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

@@ -20,8 +20,9 @@ public class IT2CCANEDOMJLBS {
             System.out.println("-----------------------------------------------");
             System.out.println("| 1. BOOKS                                    |");
             System.out.println("| 2. BORROWERS                                |");
-            System.out.println("| 3. REPORTS                                  |");
-            System.out.println("| 4. EXIT                                     |");
+            System.out.println("| 3. BORROWED BOOKS                           |");
+            System.out.println("| 4. REPORTS                                  |");
+            System.out.println("| 5. EXIT                                     |");
             System.out.println("-----------------------------------------------");
 
             System.out.print("Enter action: ");
@@ -30,6 +31,7 @@ public class IT2CCANEDOMJLBS {
             switch (action) {
 
                 case 1:
+                    
                     Books bks = new Books();
                     bks.Books();
 
@@ -43,20 +45,21 @@ public class IT2CCANEDOMJLBS {
                     break;
 
                 case 3:
-                    Reports reports = new Reports();
-
-                    reports.Reports();
+                    
+                    BorrowedBooks bwdbooks = new BorrowedBooks();
+                    bwdbooks.BorrowedBooks();
 
                     break;
                     
                 case 4:
+                    
                     Reports reports = new Reports();
-
                     reports.Reports();
 
                     break;
 
                 case 5:
+                    
                     System.out.print("Exiting Program... type 'yes' to continue: ");
                     String resp = sc.next();
                     if(resp.equalsIgnoreCase("yes")){

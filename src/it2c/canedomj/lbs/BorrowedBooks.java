@@ -1,6 +1,8 @@
 
 package it2c.canedomj.lbs;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
 
@@ -24,36 +26,35 @@ public class BorrowedBooks {
             System.out.print("Enter Action: ");
             int action = sc.nextInt();
             
-            BorrowedBooks bwdb = new BorrowedBooks();
+            BorrowedBooks bwdbooks = new BorrowedBooks();
             
             switch(action){
                 
                
                 case 1:
                     
-                    bwdb.addBorrowedBooks();
-                    bwdb.vieBorrowedBooks();
+                    bwdbooks.addBorrowedBooks();
                     
                     break;
                     
                 case 2:
                    
-                    bwdb.viewBorrowedBooks();
+                    bwdbooks.viewBorrowedBooks();
                     
                     break;
                     
                 case 3:
                     
-                    bwdb.viewBorrowedBooks();
-                    bwdb.updateBorrowedBooks();
+                    bwdbooks.viewBorrowedBooks();
+                    bwdbooks.updateBorrowedBooks();
                                
                     break;
             
                 case 4: 
                     
-                    bwdb.viewBorrowedBooks();
-                    bwdb.deleteBorrowedBooks();
-                    bwdb.viewBorrowedBooks();
+                    bwdbooks.viewBorrowedBooks();
+                    bwdbooks.deleteBorrowedBooks();
+                    bwdbooks.viewBorrowedBooks();
                                      
                    break;
                    
@@ -76,149 +77,115 @@ public class BorrowedBooks {
         
     }
         private void addBorrowedBooks(){
-            Scanner sc = new Scanner(System.in);
+            Scanner sc = new Scanner (System.in);
             config conf = new config();
-            Customer cust = new Customer();
+            Books bks = new Books();
+            bks.viewBooks();
             
-            System.out.println("-------------------");
-            System.out.println("CUSTOMER TABLE");
-            cust.viewCustomers();
+            System.out.print("Enter Selected Books ID: ");
+            int bid = sc.nextInt();
             
-            System.out.print("Enter Selected Customer ID: ");
-            int cid = sc.nextInt();
+            String bsql = "SELECT b_id FROM tbl_books WHERE b_id = ?";
+            while(conf.getSingleValue(bsql, bid)== 0){
+                System.out.print("Book does not exist, Please Select ID Again: " );
+                bid = sc.nextInt();
+            }
             
-            String csql = "SELECT id FROM customer WHERE id = ?";
-            while(conf.getSingleValue(csql, cid)== 0){
-                System.out.print("Customer does not exist, Please Select Again: " );
-                cid = sc.nextInt();
-            }            
+            Borrowers bws = new Borrowers();
+            bws.viewBorrowers();
+              
+            System.out.print("Enter Selected Borrowers ID: ");
+            int bwid = sc.nextInt();
             
-            Product prod = new Product();
-            System.out.println("-------------------");
-            System.out.println("PRODUCT TABLE");
-            prod.viewProducts();
-            
-             System.out.print("Enter Selected Product ID: ");
-            int pid = sc.nextInt();
-            
-            String psql = "SELECT p_id FROM product WHERE p_id = ?";
-            while(conf.getSingleValue(psql, pid)== 0){
-                System.out.print("Product does not exist, Please Select Again: ");
-                pid = sc.nextInt();
+            String bsql1 = "SELECT bw_id FROM tbl_borrowers WHERE bw_id = ?";
+            while(conf.getSingleValue(bsql1, bwid)== 0){
+                System.out.print("Borrower does not exist, Please Select ID Again: " );
+                bwid = sc.nextInt();
         }
+            System.out.print("Enter borrowed date: ");
+            String bwddate = sc.next();
+            
+            System.out.print("Enter due date: ");
+            String dd = sc.next();
+            
             System.out.print("Enter quantity: ");
-            double quantity = sc.nextDouble();
+            int quant = sc.nextInt();
             
-            String priceqry = "SELECT p_price FROM product WHERE p_id = ?";
-            double price = conf.getSingleValue(priceqry, pid);
-            double due = price * quantity;
-                    
-            System.out.println("-----------------------");
-            System.out.println("Total Due: "+due);
-            System.out.println("-----------------------");
-                                                                      
+            System.out.print("Enter return status: ");
+            String rstatus = sc.next();
             
-            LocalDate currdate = LocalDate.now();
-            DateTimeFormatter format = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-            String date = currdate.format(format);
+            System.out.print("Enter penalties: ");
+            String penalties = sc.next();
             
-            String status = "Pending";
-            
-                String orderqry = "INSERT INTO tbl_order (id, p_id, o_quantity, o_due, o_date, o_status) "
-                        + "VALUES (?, ?, ?, ?, ?, ?)";
+            String bdbqry = "INSERT INTO tbl_bdbooks (b_id, bw_id, bd_date, due_date, b_quantity, r_status, penalties)"
+            + "VALUES (?, ?, ?, ?, ?, ?, ?)";
                 
-                conf.addRecords(orderqry, cid, pid, quantity, due, date, status);
+            conf.addRecord(bdbqry, bid, bwid, bwddate, dd, quant, rstatus, penalties);
 
 }
         
         
         public void viewBorrowedBooks() {
-            String Cmquery = "SELECT o_id, lname, p_name, o_due, o_date, o_status FROM tbl_order "
-                    + "LEFT JOIN customer ON customer.id = tbl_order.id "
-                    + "LEFT JOIN product ON product.p_id = tbl_order.p_id";
+            String query = "SELECT bb_id, b_name, bw_lname, bd_date, due_date, r_status, penalties FROM tbl_bdbooks "
+                    + "LEFT JOIN tbl_books ON tbl_books.b_id = tbl_bdbooks.b_id "
+                    + "LEFT JOIN tbl_borrowers ON tbl_borrowers.bw_id = tbl_bdbooks.bw_id";
                   
         
-        String[] hdrs = {"Order id","Customer LastName", "Product Name",  "Due", "Date", "Status"};
-        String[] colmns = {"o_id","lname", "p_name",  "o_due", "o_date", "o_status"};
+        String[] hdrs = {"BBID","Book Name", "Borrower LastName",  "Borrowed Date", "Due", "Status", "Penalties"};
+        String[] clmns = {"bb_id","b_name", "bw_lname",  "bd_date", "due_date", "r_status", "penalties"};
         config conf = new config();
-        conf.viewRecords(Cmquery, hdrs, colmns);
+        conf.viewRecords(query, hdrs, clmns);
         
         }
         
-         private void updateBorrowedBooks(){
+        private void updateBorrowedBooks(){
         Scanner sc = new Scanner(System.in);
-        Order or = new Order();
-        Customer cs = new Customer();
-        Product pr = new Product();
+        BorrowedBooks bwdbooks = new BorrowedBooks();
+        Books bks = new Books();
+        Borrowers bws = new Borrowers();
         config conf = new config();
         
         
-        System.out.print("Enter Order ID: ");
-        int oid = sc.nextInt();
+        System.out.print("Enter Borrowed Books ID: ");
+        int bbid = sc.nextInt();
         
-        String osql = "SELECT o_id FROM tbl_order WHERE o_id = ?";
-            while(conf.getSingleValue(osql, oid)== 0){
-                System.out.print("Order ID does not exist, Please Select Again: " );
-                oid = sc.nextInt();
+        String bbsql = "SELECT bb_id FROM tbl_bdbooks WHERE bb_id = ?";
+            while(conf.getSingleValue(bbsql, bbid)== 0){
+                System.out.print("Borrowed Book ID does not exist, Please Select ID Again: " );
+                bbid = sc.nextInt();
             }
-        
-        cs.viewCustomers();
-            
-            System.out.print("Enter New Selected Customer ID: ");
-            int ncid = sc.nextInt();
-            
-            String csql = "SELECT id FROM customer WHERE id = ?";
-            while(conf.getSingleValue(csql, ncid)== 0){
-                System.out.print("Customer does not exist, Please Select Again: " );
-                ncid = sc.nextInt();
-            }
-                pr.viewProducts();
-        
-        System.out.print("Enter New Selected Product ID: ");
-            int npid = sc.nextInt();
-            
-            String psql = "SELECT p_id FROM product WHERE p_id = ?";
-            while(conf.getSingleValue(psql, npid)== 0){
-                System.out.print("Product does not exist, Please Select Again: ");
-                npid = sc.nextInt();
-        }
 
-        
-        System.out.print("Enter new Quantity:");
-        double nquant = sc.nextDouble();
-        
-         String priceqry = "SELECT p_price FROM product WHERE p_id = ?";
-            double price = conf.getSingleValue(priceqry, npid);
-            double due = price * nquant;
-                    
-            System.out.println("-----------------------");
-            System.out.println("Total Due: "+due);
-            System.out.println("-----------------------");
-                                                                      
-            
-            LocalDate currdate = LocalDate.now();
-            DateTimeFormatter format = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-            String date = currdate.format(format);
-            
-            String status = "Pending";
+              String statusQuery = "SELECT r_status FROM tbl_bdbooks WHERE bb_id = ?";
+              String currentStatus = conf.getSingleStringValue(statusQuery, bbid);
 
+    
+            bwdbooks.viewBorrowedBooks();
+
+            System.out.print("Enter new Status: ");
+            String newStatus = sc.next();
+
+    
+            if (currentStatus.equalsIgnoreCase("Cancel") || currentStatus.equalsIgnoreCase("Done")) {
+                System.out.println("Status cannot be updated as the order is already marked as '" + currentStatus + "'.");
+             } else if (newStatus.equalsIgnoreCase("Cancel") || newStatus.equalsIgnoreCase("Done")) {
         
-        String sql = "UPDATE tbl_order SET id = ?, p_id = ?, o_quantity = ?, o_due = ?, o_date = ?, o_status = ? WHERE o_id = ?";
-        
-        conf.updateRecords(sql, ncid, npid, nquant, due, date, status, oid);
-        
-        
+            String sql = "UPDATE tbl_bdbooks SET r_status = ? WHERE bb_id = ?";
+            conf.updateRecord(sql, newStatus, bbid);
+            System.out.println("Status Successfully Updated to '" + newStatus + "'.");
+            } else {
+       
+             }
     }
          
           private void deleteBorrowedBooks() {      
             Scanner sc = new Scanner(System.in);        
-            System.out.print("Enter Order ID to Delete: ");
-            int oid = sc.nextInt();
+            System.out.print("Enter Borrowed Book ID to Delete: ");
+            int bbid = sc.nextInt();
 
-            String sqlDelete = "DELETE FROM tbl_order WHERE o_id = ?";
+            String sqlDelete = "DELETE FROM tbl_bdbooks WHERE bb_id = ?";
         
-            config conf = new config();uj
-            conf.deleteRecords(sqlDelete, oid);
+            config conf = new config();
+            conf.deleteRecord(sqlDelete, bbid);
 
     }
 }

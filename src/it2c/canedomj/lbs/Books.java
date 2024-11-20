@@ -93,7 +93,7 @@ public class Books {
       }while (continueAdding.equalsIgnoreCase("yes"));
   }
   
-  private void viewBooks(){
+  public void viewBooks(){
       
       String qry = "SELECT * FROM tbl_Books";
       String[] hdrs = {"ID", "Book_Name", "Genre", "Author", "Status"};
