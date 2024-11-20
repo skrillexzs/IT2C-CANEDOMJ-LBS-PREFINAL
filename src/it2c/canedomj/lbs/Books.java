@@ -21,8 +21,23 @@ public class Books {
         System.out.println("| 5. EXIT           |");
         System.out.println("---------------------");
 
-        System.out.print("Enter Action: ");
-        int action = sc.nextInt();
+        int action = 0;
+
+            while (action < 1 || action > 5) {
+                System.out.print("Enter action: ");
+                
+                if (sc.hasNextInt()) {
+                    action = sc.nextInt();
+
+                    if (action < 1 || action > 5) {
+                        System.out.println("Invalid option! Please enter a number between 1 and 5 only.");
+                    }
+                } else {
+                    System.out.println("Invalid input. Please enter a valid number.");
+                    sc.next();
+                }
+            }
+            
         Books bks = new Books();
 
         switch(action){
@@ -79,8 +94,19 @@ public class Books {
       String bgen = sc.nextLine();
       System.out.print("Book Author: ");
       String bauth = sc.nextLine();
-      System.out.print("Book Status: ");
-      String bstat = sc.nextLine();
+      
+        String bstat = "";
+        System.out.print("Book Status (New, Old, For Replacement): ");
+        bstat = sc.nextLine();
+
+        if (bstat.equalsIgnoreCase("New") || bstat.equalsIgnoreCase("Old") || bstat.equalsIgnoreCase("For Replacement")) {
+            String qry = "INSERT INTO tbl_books(b_name, b_genre, b_author, b_status) VALUES (?, ?, ?, ?)";
+            config conf = new config();
+            conf.addRecord(qry, bname, bgen, bauth, bstat);
+        } else {
+            System.out.println("Invalid status. Please enter ('New', 'Old', or 'For Replacement' only):");
+            bstat = sc.next();         
+        }
       
       String qry = "INSERT INTO tbl_books(b_name, b_genre, b_author, b_status) VALUES (?, ?, ?, ?)";
       config conf = new config();

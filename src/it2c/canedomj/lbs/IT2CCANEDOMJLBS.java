@@ -1,6 +1,7 @@
 
 package it2c.canedomj.lbs;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 
@@ -25,8 +26,22 @@ public class IT2CCANEDOMJLBS {
             System.out.println("| 5. EXIT                                     |");
             System.out.println("-----------------------------------------------");
 
-            System.out.print("Enter action: ");
-            int action = sc.nextInt();
+            int action = 0;
+
+            while (action < 1 || action > 5) {
+                System.out.print("Enter action: ");
+                
+                if (sc.hasNextInt()) {
+                    action = sc.nextInt();
+
+                    if (action < 1 || action > 5) {
+                        System.out.println("Invalid option! Please enter a number between 1 and 5 only.");
+                    }
+                } else {
+                    System.out.println("Invalid input. Please enter a valid number.");
+                    sc.next();
+                }
+            }
 
             switch (action) {
 

@@ -22,8 +22,23 @@ public class Borrowers {
         System.out.println("| 5. EXIT               |");
         System.out.println("-------------------------");
 
-        System.out.print("Enter Action: ");
-        int action = sc.nextInt();
+        int action = 0;
+
+            while (action < 1 || action > 5) {
+                System.out.print("Enter action: ");
+                
+                if (sc.hasNextInt()) {
+                    action = sc.nextInt();
+
+                    if (action < 1 || action > 5) {
+                        System.out.println("Invalid option! Please enter a number between 1 and 5 only.");
+                    }
+                } else {
+                    System.out.println("Invalid input. Please enter a valid number.");
+                    sc.next();
+                }
+            }
+            
         Borrowers bws = new Borrowers();
 
         switch(action){
@@ -77,15 +92,25 @@ public class Borrowers {
       String bwfname = sc.nextLine();
       System.out.print("Borrowers Last Name: ");
       String bwlname = sc.nextLine();
-      System.out.print("Borrowers Contact: ");
-      String bwcontact = sc.nextLine(); 
-      System.out.print("Borrowed Books: ");
-      String bdbooks = sc.nextLine();
       
-      String qry = "INSERT INTO tbl_borrowers(bw_fname, bw_lname, bw_contact, bd_books) VALUES (?, ?, ?, ?)";
+      String bwcontact;
+    while (true) {
+        System.out.print("Borrowers Contact Number (numbers only): ");
+        bwcontact = sc.next();
+        if (bwcontact.matches("\\d+")) { 
+            break;
+        } else {
+            System.out.print("Invalid! Please enter valid digits only.");
+        }
+    }
+    
+      System.out.print("Borrowers Year Level: ");
+      String yrlvl = sc.nextLine();
+      
+      String qry = "INSERT INTO tbl_borrowers(bw_fname, bw_lname, bw_contact, bw_yr_lvl) VALUES (?, ?, ?, ?)";
       config conf = new config();
       
-      conf.addRecord(qry, bwfname, bwlname, bwcontact, bdbooks);
+      conf.addRecord(qry, bwfname, bwlname, bwcontact, yrlvl);
       
       System.out.print("Do you want to add another book? (yes/no): ");
       continueAdding = sc.nextLine();
@@ -96,8 +121,8 @@ public class Borrowers {
     public void viewBorrowers(){
         
       String qry = "SELECT * FROM tbl_Borrowers";
-      String[] hdrs = {"ID", "Borrowers_Firstname", "Borrowers_Lastname", "Borrowers_Contacts", "Borrowed_Books"};
-      String[] clms = {"bw_id", "bw_fname", "bw_lname", "bw_contact", "bd_books"};
+      String[] hdrs = {"ID", "Borrowers_Firstname", "Borrowers_Lastname", "Borrowers_Contacts", "Borrowers_Year_Level"};
+      String[] clms = {"bw_id", "bw_fname", "bw_lname", "bw_contact", "bw_yr_lvl"};
       config conf = new config();
       conf.viewRecords(qry, hdrs, clms);
     }
@@ -122,13 +147,23 @@ public class Borrowers {
       String bwfname = sc.nextLine();
       System.out.print("New Borrowers Last Name: ");
       String bwlname = sc.nextLine();
-      System.out.print("New Borrowers Contact: ");
-      String bwcontact = sc.nextLine();
-      System.out.print("New Borrowed Books: ");
-      String bdbooks = sc.nextLine();
+      String bwcontact;
       
-      String qry = "UPDATE tbl_borrowers SET bw_fname = ?, bw_lname = ?, bw_contact = ?, bd_books = ? WHERE bw_id = ?";
-      conf.updateRecord(qry, bwfname, bwlname, bwcontact, bdbooks, bwid);
+    while (true) {
+        System.out.print("New Borrowers Contact (numbers only): ");
+        bwcontact = sc.next();
+        if (bwcontact.matches("\\d+")) { 
+            break;
+        } else {
+            System.out.print("Invalid! Please enter valid digits only.");
+        }
+    }
+    
+      System.out.print("New Borrowers Year Level: ");
+      String yrlvl = sc.nextLine();
+      
+      String qry = "UPDATE tbl_borrowers SET bw_fname = ?, bw_lname = ?, bw_contact = ?, bw_yr_lvl = ? WHERE bw_id = ?";
+      conf.updateRecord(qry, bwfname, bwlname, bwcontact, yrlvl, bwid);
     }
     
     public void deleteBorrowers(){
