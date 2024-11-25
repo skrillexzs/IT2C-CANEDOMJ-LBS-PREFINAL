@@ -197,5 +197,36 @@ public void deleteRecord(String sql, Object... values) {
     String getSingleStringValue(String statusQuery, int bbid) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    public void viewRecords0(String query, String[] headers, String[] columns, int bookId) {
+    try (Connection conn = this.connectDB(); // Automatically closes connection
+         PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+        // Set the book ID parameter in the query (first parameter is indexed as 1)
+        pstmt.setInt(1, bookId);
+
+        // Execute the query and get the result set
+        ResultSet rs = pstmt.executeQuery();
+
+        // Print column headers
+        for (String header : headers) {
+            System.out.print(header + "\t");
+        }
+        System.out.println();
+
+        // Process the result set and print each row
+        while (rs.next()) {
+            for (String column : columns) {
+                // Retrieve column data using column name (e.g., rs.getString("column_name"))
+                System.out.print(rs.getString(column) + "\t");
+            }
+            System.out.println();
+        }
+    } catch (SQLException e) {
+        // Handle SQL exceptions (e.g., log the error or print the stack trace)
+        System.err.println("Error executing query: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
     
 }

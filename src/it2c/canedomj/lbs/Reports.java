@@ -5,141 +5,117 @@ import java.util.Scanner;
 
 
 public class Reports {
-    
-     public void Reports(){
         
+       public void generalReports() {
+        String query = "SELECT bb_id, b_name, bw_lname, bd_date, due_date, r_status, penalties FROM tbl_bdbooks "
+                        + "LEFT JOIN tbl_books ON tbl_books.b_id = tbl_bdbooks.b_id "
+                        + "LEFT JOIN tbl_borrowers ON tbl_borrowers.bw_id = tbl_bdbooks.bw_id";
+        
+        String[] hdrs = {"BBID", "Book Name", "Borrower LastName", "Borrowed Date", "Due", "Status", "Penalties"};
+        String[] clmns = {"bb_id", "b_name", "bw_lname", "bd_date", "due_date", "r_status", "penalties"};
+        
+        System.out.println("----------------------------");
+        System.out.println("    GENERAL ORDER REPORT    ");
+        System.out.println("----------------------------");
+        config conf = new config();
+        conf.viewRecords(query, hdrs, clmns);
+    }
+
+    public void specificReports() {
         Scanner sc = new Scanner(System.in);
-    String response;
         
-    do{
-        System.out.println("---------------------------");
-        System.out.println("|      REPORTS LISTS      |");
-        System.out.println("---------------------------");
-        System.out.println("| 1. ADD TRANSACTIONS     |");
-        System.out.println("| 2. VIEW TRANSACTIONS    |");
-        System.out.println("| 3. UPDATE TRANSACTION   |");
-        System.out.println("| 4. DELETE TRANSACTIONS  |");
-        System.out.println("| 5. EXIT                 |");
-        System.out.println("---------------------------");
+        Books bks = new Books();
+        System.out.println("------------------");
+        System.out.println("    BOOKS LIST    ");
+        System.out.println("------------------");
+        bks.viewBooks();
+        
+        System.out.print("Enter Book ID for a specific report: ");
+        int bookId = sc.nextInt();
 
-        System.out.print("Enter Action: ");
-        int action = sc.nextInt();
-        Reports report = new Reports();
+        config conf = new config();
+        String checkBookQuery = "SELECT b_id FROM tbl_books WHERE b_id = ?";
+        if (conf.getSingleValue(checkBookQuery, bookId) == 0) {
+            System.out.println("Book does not exist.");
+            return;
+        }
 
-        switch(action){
-          case 1:
-              
-              report.addReports();
-              report.viewReports();
+        String query = "SELECT bb_id, b_name, bw_lname, bd_date, due_date, r_status, penalties FROM tbl_bdbooks "
+                        + "LEFT JOIN tbl_books ON tbl_books.b_id = tbl_bdbooks.b_id "
+                        + "LEFT JOIN tbl_borrowers ON tbl_borrowers.bw_id = tbl_bdbooks.bw_id "
+                        + "WHERE tbl_bdbooks.bb_id = ?";
+        
+        String[] hdrs = {"BBID", "Book Name", "Borrower LastName", "Borrowed Date", "Due", "Status", "Penalties"};
+        String[] clmns = {"bb_id", "b_name", "bw_lname", "bd_date", "due_date", "r_status", "penalties"};
+        
+        System.out.println("=== SPECIFIC REPORT FOR BOOK ID: " + bookId + " ===");
+        conf.viewRecords0(query, hdrs, clmns, bookId);
 
-            break;
+        sc.close();  // Close the Scanner when done
+    }
 
-          case 2:
-              
-              report.viewReports();
+    public void Reports() {
+        Scanner sc = new Scanner(System.in);
+        String response;
+        
+        do {    
+            System.out.println("------------------------------");
+            System.out.println("    BORROWED BOOKS REPORTS    ");
+            System.out.println("------------------------------");
+            System.out.println("1. GENERAL REPORTS            ");
+            System.out.println("2. SPECIFIC REPORTS           ");
+            System.out.println("3. EXIT REPORTS PANEL         ");
+            System.out.println("------------------------------");
+            
+            int act = 0;
 
-            break;
+            while (act < 1 || act > 3) {
+                System.out.print("Enter action: ");
+                
+                if (sc.hasNextInt()) {
+                    act = sc.nextInt();
 
-          case 3:
-              
-              report.viewReports();
-              report.updateReports();
-              report.viewReports();
-
-            break;
-
-          case 4:
-              
-              report.viewReports();
-              report.deleteReports();
-              report.viewReports();
-   
-            break;
-
-          case 5:    
-         
-            break;
+                    if (act < 1 || act > 3) {
+                        System.out.println("Invalid option! Please enter a number from 1-3 only.");
+                    }
+                } else {
+                    System.out.println("Invalid input. Please enter a valid number.");
+                    sc.next(); 
                 }
+            }
+         
+            Reports reps = new Reports();
+         
+            switch(act) {
+                case 1:
+                    reps.generalReports();
+                    break;
+                    
+                case 2:
+                    reps.specificReports();
+                    break;
+                    
+                case 3:
+                    System.out.println("\nReturning to Main System...\n");
+                    sc.close();  // Close the Scanner when done
+                    return;
+                    
+                default:
+                    System.out.println("Invalid option. Please try again.");
+                    break;
+            }
+            
+            System.out.print("Do you want to continue? (yes/no): ");
+            response = sc.next();
+
+            while (!response.equalsIgnoreCase("yes") && !response.equalsIgnoreCase("no")) {
+                System.out.println("Invalid input! Please answer only 'yes' or 'no'.");
                 System.out.print("Do you want to continue? (yes/no): ");
                 response = sc.next();
+            }
             
-        }while(response.equalsIgnoreCase("yes"));
-    }
-    
-    public void addReports(){
+        } while (response.equalsIgnoreCase("yes"));
         
-      Scanner sc = new Scanner(System.in);
-      
-      System.out.print("Borrowers Name: ");
-      String bwname = sc.nextLine();
-      System.out.print("Borrowed Books: ");
-      String bdbooks = sc.nextLine();
-      System.out.print("Borrowed Date: ");
-      String bddate = sc.nextLine(); 
-      System.out.print("Due Date: ");
-      String duedate = sc.nextLine();
-      
-      String qry = "INSERT INTO tbl_transactions(bw_name, bd_books, bd_date, due_date) VALUES (?, ?, ?, ?)";
-      config conf = new config();
-      
-      conf.addRecord(qry, bwname, bdbooks, bddate, duedate);
+        sc.close();  // Close the Scanner when done
     }
-    
-    public void viewReports(){
-        
-      String qry = "SELECT * FROM tbl_transactions";
-      String[] hdrs = {"ID", "Borrowers_Name", "Borrowed_Books", "Borrowed_Date", "Due_Date"};
-      String[] clms = {"bw_id", "bw_name", "bd_books", "bd_date", "due_date"};
-      config conf = new config();
-      conf.viewRecords(qry, hdrs, clms);
-    }
-    
-    public void updateReports(){
-        
-      Scanner sc = new Scanner(System.in);
-      config conf = new config();
-      
-      System.out.println("Enter Transactions ID you want to Update: ");
-      int tid = sc.nextInt();
-      sc.nextLine();
-      
-      while(conf.getSingleValue("SELECT t_id FROM tbl_transactions WHERE t_id = ?", tid) == 0){
-          System.out.println("ID doesn't exist!");
-          System.out.println("Please try again!: ");
-          tid = sc.nextInt();
-          sc.nextLine();    
-      }
-      
-      System.out.print("New Borrowers Name: ");
-      String bwname = sc.nextLine();
-      System.out.print("New Borrowed Books: ");
-      String bdbooks = sc.nextLine();
-      System.out.print("New Borrowed Date: ");
-      String bddate = sc.nextLine(); 
-      System.out.print("New Due Date: ");
-      String duedate = sc.nextLine();
-      
-      String qry = "UPDATE tbl_transactions SET bw_name = ?, bd_books = ?, bd_date = ?, due_date = ? WHERE t_id = ?";
-      conf.updateRecord(qry, bwname, bdbooks, bddate, duedate, tid);
-    }
-    
-    public void deleteReports(){
-        
-      Scanner sc = new Scanner(System.in);
-      config conf = new config();
-      
-      System.out.println("Enter Transactions ID you want to delete: ");
-      int tid = sc.nextInt();
-      
-      while(conf.getSingleValue("SELECT t_id FROM tbl_transactions WHERE t_id = ?", tid) == 0){
-          System.out.println("ID doesn't exist!");
-          System.out.println("Please try again!: ");
-          tid = sc.nextInt();
-      }
-      
-      String qry = "DELETE FROM tbl_transactions WHERE t_id = ?";
-      conf.deleteRecord(qry, tid);
-    }
-    
-    
 }
