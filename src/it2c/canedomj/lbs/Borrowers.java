@@ -88,10 +88,27 @@ public class Borrowers {
       String continueAdding;
       
       do{
-      System.out.print("Borrowers First Name: ");
-      String bwfname = sc.nextLine();
-      System.out.print("Borrowers Last Name: ");
-      String bwlname = sc.nextLine();
+      String bwfname;
+      while (true) {
+            System.out.print("Borrowers First Name: ");
+            bwfname = sc.nextLine();
+            if (bwfname.matches("[a-zA-Z , . - ]+")) { 
+                break;
+            } else {
+                System.out.println("Invalid name. Please enter only words (letters and spaces).");
+            }
+        }
+      
+      String bwlname;
+      while (true) {
+            System.out.print("Borrowers Last Name: ");
+            bwlname = sc.nextLine();
+            if (bwlname.matches("[a-zA-Z , . - ]+")) {
+                break;
+            } else {
+                System.out.println("Invalid name. Please enter only words (letters and spaces).");
+            }
+        }
       
       String bwcontact;
     while (true) {
@@ -104,8 +121,18 @@ public class Borrowers {
         }
     }
     
-      System.out.print("Borrowers Year Level: ");
-      String yrlvl = sc.nextLine();
+      String yrlvl;
+        while (true) {
+            System.out.print("Borrower's Year Level: ");
+            yrlvl = sc.nextLine().trim();
+
+            if (yrlvl.equals("1st year") || yrlvl.equals("2nd year") ||
+                yrlvl.equals("3rd year") || yrlvl.equals("4th year")) {
+                break;
+            } else {
+                System.out.println("Invalid input. Please enter a valid year level (1st year, 2nd year, 3rd year, 4th year).");
+            }
+        }
       
       String qry = "INSERT INTO tbl_borrowers(bw_fname, bw_lname, bw_contact, bw_yr_lvl) VALUES (?, ?, ?, ?)";
       config conf = new config();

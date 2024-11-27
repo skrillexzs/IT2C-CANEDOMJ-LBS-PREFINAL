@@ -90,12 +90,30 @@ public class Books {
       do{
       System.out.print("Book Name: ");
       String bname = sc.nextLine();
-      System.out.print("Book Genre: ");
-      String bgen = sc.nextLine();
-      System.out.print("Book Author: ");
-      String bauth = sc.nextLine();
       
-        String bstat = "";
+      String bgen;
+      while (true) {
+            System.out.print("Book Genre: ");
+            bgen = sc.nextLine();
+            if (bgen.matches("[a-zA-Z , . - ]+")) {  // regex allows only letters and spaces
+                break;
+            } else {
+                System.out.println("Invalid genre. Please enter only words (letters and spaces).");
+            }
+        }
+      
+      String bauth;
+      while (true) {
+            System.out.print("Book Author: ");
+            bauth = sc.nextLine();
+            if (bauth.matches("[a-zA-Z , . - ]+")) {  // regex allows only letters and spaces
+                break;
+            } else {
+                System.out.println("Invalid author name. Please enter only words (letters and spaces).");
+            }
+        }
+      
+        String bstat;
         System.out.print("Book Status (New, Old, For Replacement): ");
         bstat = sc.nextLine();
 
@@ -147,12 +165,40 @@ public class Books {
       
       System.out.print("New Book Name: ");
       String bname = sc.nextLine();
-      System.out.print("New Book Genre: ");
-      String bgen = sc.nextLine();
-      System.out.print("New Book Author: ");
-      String bauth = sc.nextLine();
-      System.out.print("New Book Status: ");
-      String bstat = sc.nextLine();
+      
+      String bgen = "";
+      while (true) {
+            System.out.print("Book Genre: ");
+            bgen = sc.nextLine();
+            if (bgen.matches("[a-zA-Z , . - ]+")) {
+                break;
+            } else {
+                System.out.println("Invalid genre. Please enter only words (letters and spaces).");
+            }
+        }
+      
+      String bauth = "";
+      while (true) {
+            System.out.print("Book Author: ");
+            bauth = sc.nextLine();
+            if (bauth.matches("[a-zA-Z , . - ]+")) {
+                break;
+            } else {
+                System.out.println("Invalid author name. Please enter only words (letters and spaces).");
+            }
+        }
+      
+      String bstat;
+        System.out.print("Book Status (New, Old, For Replacement): ");
+        bstat = sc.nextLine();
+
+        if (bstat.equalsIgnoreCase("New") || bstat.equalsIgnoreCase("Old") || bstat.equalsIgnoreCase("For Replacement")) {
+            String qry = "INSERT INTO tbl_books(b_name, b_genre, b_author, b_status) VALUES (?, ?, ?, ?)";
+            conf.addRecord(qry, bname, bgen, bauth, bstat);
+        } else {
+            System.out.println("Invalid status. Please enter ('New', 'Old', or 'For Replacement' only):");
+            bstat = sc.next();         
+        }
       
       String qry = "UPDATE tbl_Books SET b_name = ?, b_genre = ?, b_author = ?, b_status = ? WHERE b_id = ?";
       conf.updateRecord(qry, bname, bgen, bauth, bstat, bid);
